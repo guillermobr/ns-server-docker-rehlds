@@ -26,9 +26,9 @@ RUN mkdir -p /opt/steam/.steam && \
     echo 70 > /hlds/steam_appid.txt
 
 # Copy startup script
+RUN chown -R steam:steam /hlds
 COPY start_server.sh /hlds/start_server.sh
-RUN chmod +x /hlds/start_server.sh && \
-    chown -R steam:steam /hlds
+RUN chmod +x /hlds/start_server.sh
 
 # Switch to steam user
 USER steam
@@ -46,20 +46,19 @@ RUN mkdir -p /hlds/ns && \
     unzip ns_v33b9_full.zip -d /hlds && rm ns_v33b9_full.zip
 
 # --- Install Metamod-R ---
-RUN mkdir -p /hlds/ns/addons/metamod/dlls && \
+RUN cd /hlds/ns && \
     wget https://github.com/rehlds/Metamod-R/releases/download/1.3.0.149/metamod-bin-1.3.0.149.zip && \
     unzip metamod-bin-1.3.0.149.zip && \
-    cp addons/metamod/metamod_i386.so /hlds/ns/addons/metamod/metamod_i386.so && \
     sed -i 's|gamedll_linux "dlls/ns.so"|gamedll_linux "addons/metamod/metamod_i386.so"|g' /hlds/ns/liblist.gam && \
-    rm -rf metamod-bin-1.3.0.149.zip addons
+    rm metamod-bin-1.3.0.149.zip
 
 # --- Install AMX Mod X ---
-# RUN cd /hlds/ns/addons && \
-#     wget https://github.com/pierow/amxmodx-ns/releases/download/amxx-ns3.3b9/amxx_1.8.2_lin_ns3.3b9_full.zip && \
-#     unzip amxx_1.8.2_lin_ns3.3b9_full.zip && \
-#     ls -la && \
-#     rm amxx_1.8.2_lin_ns3.3b9_full.zip && \
-#     echo "linux addons/amxmodx/dlls/amxmodx_mm_i386.so" >> /hlds/ns/addons/metamod/plugins.ini
+RUN cd /hlds/ns/addons && \
+    wget https://github.com/pierow/amxmodx-ns/releases/download/amxx-ns3.3b9/amxx_1.8.2_lin_ns3.3b9_full.zip && \
+    unzip amxx_1.8.2_lin_ns3.3b9_full.zip && \
+    ls -la && \
+    rm amxx_1.8.2_lin_ns3.3b9_full.zip && \
+    echo "linux addons/amxmodx/dlls/amxmodx_mm_i386.so" >> /hlds/ns/addons/metamod/plugins.ini
 
 # Expose HLDS port
 EXPOSE 27015/udp 27015/tcp
