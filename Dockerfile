@@ -53,7 +53,7 @@ RUN cd /hlds/ns && \
     rm metamod-bin-1.3.0.149.zip
 
 # --- Install AMX Mod X ---
-RUN cd /hlds/ns/addons && \
+RUN cd /hlds/ns && \
     wget https://github.com/pierow/amxmodx-ns/releases/download/amxx-ns3.3b9/amxx_1.8.2_lin_ns3.3b9_full.zip && \
     unzip amxx_1.8.2_lin_ns3.3b9_full.zip && \
     rm amxx_1.8.2_lin_ns3.3b9_full.zip && \
