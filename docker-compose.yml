@@ -1,0 +1,12 @@
+services:
+  nsserver:
+    build: .
+    container_name: ns_server
+    ports:
+      - "27015:27015/udp"
+      - "27015:27015/tcp"
+    volumes:
+      - ./ns_configs:/hlds/ns/addons/amxmodx/configs
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
