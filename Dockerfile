@@ -46,11 +46,12 @@ RUN mkdir -p /hlds/ns && \
     unzip ns_v33b9_full.zip -d /hlds && rm ns_v33b9_full.zip
 
 # --- Install Metamod-R ---
-# RUN mkdir -p /hlds/ns/addons/metamod/dlls && \
-#     wget https://github.com/rehlds/Metamod-R/releases/download/1.3.0.149/metamod-bin-1.3.0.149.zip && \
-#     unzip metamod-bin-1.3.0.149.zip && \
-#     find . -name "*metamod*.so" -exec cp {} /hlds/ns/addons/metamod/dlls/metamod.so \; && \
-#     rm -rf metamod-bin-1.3.0.149.zip
+RUN mkdir -p /hlds/ns/addons/metamod/dlls && \
+    wget https://github.com/rehlds/Metamod-R/releases/download/1.3.0.149/metamod-bin-1.3.0.149.zip && \
+    unzip metamod-bin-1.3.0.149.zip && \
+    cp addons/metamod/metamod_i386.so /hlds/ns/addons/metamod/metamod_i386.so && \
+    sed -i 's|gamedll_linux "dlls/ns.so"|gamedll_linux "addons/metamod/metamod_i386.so"|g' /hlds/ns/liblist.gam && \
+    rm -rf metamod-bin-1.3.0.149.zip addons
 
 # --- Install AMX Mod X ---
 # RUN cd /hlds/ns/addons && \
