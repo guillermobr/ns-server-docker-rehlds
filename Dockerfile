@@ -1,4 +1,4 @@
-FROM debian:bullseye
+FROM ubuntu:24.04
 
 # Install dependencies
 RUN dpkg --add-architecture i386 && apt-get update && \
@@ -56,7 +56,6 @@ RUN cd /hlds/ns && \
 RUN cd /hlds/ns/addons && \
     wget https://github.com/pierow/amxmodx-ns/releases/download/amxx-ns3.3b9/amxx_1.8.2_lin_ns3.3b9_full.zip && \
     unzip amxx_1.8.2_lin_ns3.3b9_full.zip && \
-    ls -la && \
     rm amxx_1.8.2_lin_ns3.3b9_full.zip && \
     echo "linux addons/amxmodx/dlls/amxmodx_mm_i386.so" >> /hlds/ns/addons/metamod/plugins.ini
 
