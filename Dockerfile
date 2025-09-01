@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM debian:bullseye-slim
 
 # Install dependencies
 RUN dpkg --add-architecture i386 && apt-get update && \
@@ -26,7 +26,9 @@ RUN mkdir -p /opt/steam/.steam && \
     echo 70 > /hlds/steam_appid.txt
 
 # Copy startup script
-RUN chown -R steam:steam /hlds
+RUN chown -R steam:steam /hlds && \
+    mkdir -p /tmp/dumps && \
+    chown steam:steam /tmp/dumps
 COPY start_server.sh /hlds/start_server.sh
 RUN chmod +x /hlds/start_server.sh
 
@@ -36,28 +38,24 @@ USER steam
 # --- Install HLDS (ReHLDS) overlay ---
 RUN wget https://github.com/rehlds/ReHLDS/releases/download/3.14.0.857/rehlds-bin-3.14.0.857.zip && \
     unzip rehlds-bin-3.14.0.857.zip && \
-    ls -la && \
     chmod +x bin/linux32/hlds_linux && \
     rm rehlds-bin-3.14.0.857.zip
 
 # --- Install Natural Selection ---
-RUN mkdir -p /hlds/ns && \
-    wget https://github.com/ENSL/NS/releases/download/v3.3b9/ns_v33b9_full.zip && \
-    unzip ns_v33b9_full.zip -d /hlds && rm ns_v33b9_full.zip
+RUN mkdir -p /hlds/ns
+RUN wget https://github.com/ENSL/NS/releases/download/v3.3b9/ns_v33b9_full.zip
+RUN unzip ns_v33b9_full.zip -d /hlds && rm ns_v33b9_full.zip
 
-# --- Install Metamod-R ---
+# --- Install ENSL Plugin Package ---
 RUN cd /hlds/ns && \
-    wget https://github.com/rehlds/Metamod-R/releases/download/1.3.0.149/metamod-bin-1.3.0.149.zip && \
-    unzip metamod-bin-1.3.0.149.zip && \
-    sed -i 's|gamedll_linux "dlls/ns.so"|gamedll_linux "addons/metamod/metamod_i386.so"|g' /hlds/ns/liblist.gam && \
-    rm metamod-bin-1.3.0.149.zip
+    cp /hlds/ns/liblist.gam /hlds/ns/liblist.bak && \
+    wget https://github.com/ENSL/ensl-plugin/releases/download/1.4-extra/ENSL_SrvPkg-1.4-extra.zip -O srv.zip && \
+    unzip -o srv.zip && \
+    touch /hlds/ns/server.cfg && \
+    rm srv.zip
 
-# --- Install AMX Mod X ---
-RUN cd /hlds/ns && \
-    wget https://github.com/pierow/amxmodx-ns/releases/download/amxx-ns3.3b9/amxx_1.8.2_lin_ns3.3b9_full.zip && \
-    unzip amxx_1.8.2_lin_ns3.3b9_full.zip && \
-    rm amxx_1.8.2_lin_ns3.3b9_full.zip && \
-    echo "linux addons/amxmodx/dlls/amxmodx_mm_i386.so" >> /hlds/ns/addons/metamod/plugins.ini
+# Copy own configs including AMX configurations
+ADD overlay /hlds/ns/
 
 # Expose HLDS port
 EXPOSE 27015/udp 27015/tcp
