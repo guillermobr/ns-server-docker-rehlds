@@ -57,6 +57,12 @@ RUN cd /hlds/ns && \
 # Copy own configs including AMX configurations
 ADD overlay /hlds/ns/
 
+# Fix ownership of copied overlay files
+USER root
+RUN chown -R steam:steam /hlds/ns/ && \
+    chmod -R 755 /hlds/ns/
+USER steam
+
 # Expose HLDS port
 EXPOSE 27015/udp 27015/tcp
 
