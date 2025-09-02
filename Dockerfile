@@ -2,7 +2,7 @@ FROM debian:bullseye-slim
 
 # Install dependencies
 RUN dpkg --add-architecture i386 && apt-get update && \
-    apt-get install -y wget tar unzip git lib32gcc-s1 lib32stdc++6 libc6-i386 curl && \
+    apt-get install -y wget tar unzip git lib32gcc-s1 lib32stdc++6 libc6-i386 curl gdb && \
     rm -rf /var/lib/apt/lists/*
 
 # Create steam user
